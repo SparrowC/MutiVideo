@@ -15,6 +15,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.VideoView;
 
 import java.io.IOException;
@@ -40,32 +41,55 @@ public class MainActivity extends AppCompatActivity {
     private SurfaceView[] mSurfaceViews = new SurfaceView[SURFACE_RES_IDS.length];
     private SurfaceHolder[] mSurfaceHolders = new SurfaceHolder[SURFACE_RES_IDS.length];
 
+    private ProgressBar progressBar;
+
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_main);
+        inti();
+        loadVideo();
+    }
 
-        // create surface holders
+    private void loadVideo() {
         for (int i=0; i<mSurfaceViews.length; i++) {
-            mSurfaceViews[i] = (SurfaceView) findViewById(SURFACE_RES_IDS[i]);
-            mSurfaceHolders[i] = mSurfaceViews[i].getHolder();
-            mSurfaceHolders[i].addCallback(new MyCallBack(i));
-            try {
-                mMediaPlayers[i]=new MediaPlayer();
-                mMediaPlayers[i].setDataSource(this, Uri.parse(uris[i]));
-                mMediaPlayers[i].prepare();
-                final int finalI = i;
-                mMediaPlayers[i].setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        mMediaPlayers[finalI].start();
+            final int finalI = i;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mSurfaceHolders[finalI] = mSurfaceViews[finalI].getHolder();
+                    mSurfaceHolders[finalI].addCallback(new MyCallBack(finalI));
+
+                    try {
+                        mMediaPlayers[finalI]=new MediaPlayer();
+                        mMediaPlayers[finalI].setDataSource(MainActivity.this, Uri.parse(uris[finalI]));
+                        mMediaPlayers[finalI].prepare();
+                        mMediaPlayers[finalI].setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mp) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mMediaPlayers[finalI].start();
+                                    }
+                                });
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                }
+            }).start();
         }
+    }
+
+    private void inti() {
+        progressBar= (ProgressBar) findViewById(R.id.progressBar);
+        for (int i=0; i<mSurfaceViews.length; i++)
+            mSurfaceViews[i] = (SurfaceView) findViewById(SURFACE_RES_IDS[i]);
+
+        progressBar.setVisibility(View.VISIBLE);
     }
 
 
@@ -103,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
+            progressBar.setVisibility(View.INVISIBLE);
         }
 
         @Override
