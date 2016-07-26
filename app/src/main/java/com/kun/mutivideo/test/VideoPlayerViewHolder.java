@@ -8,18 +8,18 @@ import android.widget.TextView;
 
 import com.kun.mutivideo.R;
 
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
+
 /**
  * Created by jiangkun on 16/7/25.
  */
-public class VideoViewHolder extends RecyclerView.ViewHolder {
-    public SurfaceView surfaceView;
-    public ProgressBar progressBar;
+public class VideoPlayerViewHolder extends RecyclerView.ViewHolder {
+    public JCVideoPlayerStandard videoPlayer;
     public TextView numText;
 
-    public VideoViewHolder(View itemView) {
+    public VideoPlayerViewHolder(View itemView) {
         super(itemView);
-        surfaceView = (SurfaceView) itemView.findViewById(R.id.surfaceView);
-        progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
+        videoPlayer = (JCVideoPlayerStandard) itemView.findViewById(R.id.videoPlayer);
         numText = (TextView) itemView.findViewById(R.id.numText);
     }
 }

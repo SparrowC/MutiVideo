@@ -3,15 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="300dp"
     android:layout_margin="5dp">
-    <SurfaceView
-        android:id="@+id/surfaceView"
+    <fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard
+        android:id="@+id/videoPlayer"
         android:layout_width="match_parent"
-        android:layout_height="300dp" />
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_height="300dp"/>
     <TextView
         android:id="@+id/numText"
         android:layout_width="wrap_content"
