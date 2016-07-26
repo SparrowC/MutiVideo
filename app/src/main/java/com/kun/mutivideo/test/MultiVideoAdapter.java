@@ -22,31 +22,23 @@ public class MultiVideoAdapter extends RecyclerView.Adapter<VideoViewHolder> {
     private Context context;
     private String[] uris;
     private MediaPlayer[] mediaPlayers;
-    private Handler handler;
 
     public MultiVideoAdapter(Context context, String[] uris) {
         this.context = context;
         this.uris = uris;
-        handler=new Handler(context.getMainLooper()){
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-
-            }
-        };
-        mediaPlayers=new MediaPlayer[uris.length];
+        mediaPlayers = new MediaPlayer[uris.length];
     }
 
     @Override
     public VideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new VideoViewHolder(LayoutInflater.from(context).inflate(R.layout.surfaceview_item,parent,false));
+        return new VideoViewHolder(LayoutInflater.from(context).inflate(R.layout.surfaceview_item, parent, false));
     }
 
     @Override
     public void onBindViewHolder(final VideoViewHolder videoHolder, final int position) {
-        videoHolder.numText.setText(""+position);
+        videoHolder.numText.setText("" + position);
         videoHolder.progressBar.setVisibility(View.VISIBLE);
-        videoHolder.surfaceView.getHolder().addCallback(new MyCallBack(videoHolder,position));
+        videoHolder.surfaceView.getHolder().addCallback(new MyCallBack(videoHolder, position));
     }
 
     @Override
@@ -57,24 +49,23 @@ public class MultiVideoAdapter extends RecyclerView.Adapter<VideoViewHolder> {
     private class MyCallBack implements SurfaceHolder.Callback {
         private VideoViewHolder videoHolder;
         private int position;
+
         public MyCallBack(VideoViewHolder videoHolder, int position) {
-            this.videoHolder=videoHolder;
-            this.position=position;
+            this.videoHolder = videoHolder;
+            this.position = position;
         }
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-            if(mediaPlayers[position]==null)
-            {
-                mediaPlayers[position]=new MediaPlayer();
+            if (mediaPlayers[position] == null) {
+                mediaPlayers[position] = new MediaPlayer();
                 try {
                     mediaPlayers[position].setDataSource(context, Uri.parse(uris[position]));
                     mediaPlayers[position].prepareAsync();
                     mediaPlayers[position].setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mp) {
-                            if(mediaPlayers[position]!=null)
-                            {
+                            if (mediaPlayers[position] != null) {
                                 videoHolder.progressBar.setVisibility(View.INVISIBLE);
                                 mediaPlayers[position].start();
                                 mediaPlayers[position].setLooping(true);
@@ -95,11 +86,10 @@ public class MultiVideoAdapter extends RecyclerView.Adapter<VideoViewHolder> {
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            if(mediaPlayers[position]!=null)
-            {
+            if (mediaPlayers[position] != null) {
                 mediaPlayers[position].stop();
                 mediaPlayers[position].release();
-                mediaPlayers[position]=null;
+                mediaPlayers[position] = null;
                 videoHolder.progressBar.setVisibility(View.VISIBLE);
             }
         }
